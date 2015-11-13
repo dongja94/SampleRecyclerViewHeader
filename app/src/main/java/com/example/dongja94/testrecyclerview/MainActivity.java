@@ -53,14 +53,40 @@ public class MainActivity extends AppCompatActivity {
 //        });
 //        mAdapter = new GridAdapter();
 
-        LinearLayoutManager manager = new LinearLayoutManager(this);
+        final LinearLayoutManager manager = new LinearLayoutManager(this);
         mAdapter = new ChoiceAdapter();
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(mAdapter);
+        manager.scrollToPosition(5);
+        manager.smoothScrollToPosition(recyclerView, null, 5);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (isLastItem && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    getMoreItem();
+                }
+            }
 
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int totalItemCount = manager.getItemCount();
+                int lastVisibleItemPosition = manager.findLastCompletelyVisibleItemPosition();
+                if (totalItemCount > 0 && lastVisibleItemPosition != RecyclerView.NO_POSITION && (totalItemCount - 1 <= lastVisibleItemPosition)) {
+                    isLastItem = true;
+                } else {
+                    isLastItem = false;
+                }
+            }
+        });
         initData();
     }
+    boolean isLastItem = false;
 
+    private void getMoreItem() {
+
+    }
     private void initData() {
         for (int i = 0; i < 30; i++) {
             mAdapter.add("item " + i);

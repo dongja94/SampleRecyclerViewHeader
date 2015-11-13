@@ -53,8 +53,23 @@ public class ChoiceAdapter extends RecyclerView.Adapter<ChoiceViewHolder> implem
         return checkedItems;
     }
 
+    int mSelectedPosition = -1;
+
+    private boolean isSingle = true;
     public void setItemCheck(int position, boolean check) {
-        checkedItems.put(position, check);
-        notifyDataSetChanged();
+
+        if (isSingle) {
+            if (mSelectedPosition != position) {
+                if (mSelectedPosition != -1) {
+                    checkedItems.put(mSelectedPosition, false);
+                }
+                checkedItems.put(position, true);
+                mSelectedPosition = position;
+                notifyDataSetChanged();
+            }
+        } else {
+            checkedItems.put(position, check);
+            notifyDataSetChanged();
+        }
     }
 }
